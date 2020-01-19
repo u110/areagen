@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
+	"time"
 )
 
 type Area struct {
@@ -43,7 +45,7 @@ func (a *Area) ShowRange(w int, h int) {
 }
 
 func (a *Area) Sep() {
-	sepX := a.W() / 2
+	sepX := rand.Intn(a.W())
 	area := Area{Id: 0, TL: []int{0, 0}, BR: []int{sepX, a.H()}}
 	sub := Area{Id: 1, TL: []int{sepX, 0}, BR: []int{a.W(), a.H()}}
 	a.Child = &sub
@@ -51,6 +53,7 @@ func (a *Area) Sep() {
 }
 
 func main() {
+	rand.Seed(time.Now().UnixNano()) // set random seed
 	fmt.Println("1. create area")
 	x, y := 30, 10
 	area := Area{Id: 0, TL: []int{0, 0}, BR: []int{x, y}}
