@@ -45,10 +45,10 @@ func (a *Area) ShowRange(w int, h int) {
 }
 
 func (a *Area) Sep() {
-	sepX := rand.Intn(a.W())
+	sepX := 4 + rand.Intn(a.W()-4)
 	fmt.Println("sepX:", sepX)
-	subA := Area{Id: a.Id + 1, TL: []int{0, 0}, BR: []int{sepX, a.H()}}
-	subB := Area{Id: a.Id + 1, TL: []int{sepX, 0}, BR: []int{a.W(), a.H()}}
+	subA := Area{Id: a.Id + 1, TL: a.TL, BR: []int{sepX + a.TL[0], a.BR[1]}}
+	subB := Area{Id: a.Id + 1, TL: []int{sepX + a.TL[0], a.TL[1]}, BR: a.BR}
 	if sepX < a.W()/2 {
 		// 大きい方を子とする
 		a.Child = &subB
