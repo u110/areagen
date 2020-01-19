@@ -26,7 +26,7 @@ func (a *Area) H() int {
 
 func (a *Area) Show(i int, j int) error {
 	if a.InRange(i, j) {
-		fmt.Print(a.Id)
+		fmt.Printf("\x1b[3%dm%d\x1b[0m", a.Id%6+1, a.Id)
 		return nil
 	}
 	if a.Child != nil {
@@ -50,12 +50,12 @@ func (a *Area) Sep() {
 	subA := Area{Id: a.Id + 1, TL: []int{0, 0}, BR: []int{sepX, a.H()}}
 	subB := Area{Id: a.Id + 1, TL: []int{sepX, 0}, BR: []int{a.W(), a.H()}}
 	if sepX < a.W()/2 {
-		// 大きい方を親区間とする
-		a.Child = &subA
-		a.TL, a.BR = subB.TL, subB.BR
-	} else {
+		// 大きい方を子とする
 		a.Child = &subB
 		a.TL, a.BR = subA.TL, subA.BR
+	} else {
+		a.Child = &subA
+		a.TL, a.BR = subB.TL, subB.BR
 	}
 }
 
@@ -67,5 +67,8 @@ func main() {
 	area.ShowRange(x, y)
 	fmt.Println("2. sep")
 	area.Sep()
+	area.ShowRange(x, y)
+	fmt.Println("3. sep")
+	area.Child.Sep()
 	area.ShowRange(x, y)
 }
