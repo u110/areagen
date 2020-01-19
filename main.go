@@ -46,16 +46,23 @@ func (a *Area) ShowRange(w int, h int) {
 
 func (a *Area) Sep() {
 	sepX := rand.Intn(a.W())
-	area := Area{Id: 0, TL: []int{0, 0}, BR: []int{sepX, a.H()}}
-	sub := Area{Id: 1, TL: []int{sepX, 0}, BR: []int{a.W(), a.H()}}
-	a.Child = &sub
-	a.TL, a.BR = area.TL, area.BR
+	fmt.Println("sepX:", sepX)
+	subA := Area{Id: a.Id + 1, TL: []int{0, 0}, BR: []int{sepX, a.H()}}
+	subB := Area{Id: a.Id + 1, TL: []int{sepX, 0}, BR: []int{a.W(), a.H()}}
+	if sepX < a.W()/2 {
+		// 大きい方を親区間とする
+		a.Child = &subA
+		a.TL, a.BR = subB.TL, subB.BR
+	} else {
+		a.Child = &subB
+		a.TL, a.BR = subA.TL, subA.BR
+	}
 }
 
 func main() {
 	rand.Seed(time.Now().UnixNano()) // set random seed
 	fmt.Println("1. create area")
-	x, y := 30, 10
+	x, y := 50, 10
 	area := Area{Id: 0, TL: []int{0, 0}, BR: []int{x, y}}
 	area.ShowRange(x, y)
 	fmt.Println("2. sep")
