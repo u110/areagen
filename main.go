@@ -45,15 +45,15 @@ func (a *Area) ShowRange(w int, h int) {
 	}
 }
 
-func RandFilterIntn(num int, upto int) int {
-	x := rand.Intn(num)
-	x = int(math.Min(float64(num-4), float64(x)))
-	x = int(math.Max(float64(4), float64(x)))
-	return x
+func RandFilterIntn(num int, upto float64) int {
+	x := float64(rand.Intn(num))
+	x = math.Min(float64(num)-upto, x)
+	x = math.Max(upto, x)
+	return int(x)
 }
 
 func (a *Area) Sep() {
-	sepX := RandFilterIntn(a.W(), 4)
+	sepX := RandFilterIntn(a.W(), 6)
 	fmt.Println("sepX:", sepX)
 	subA := Area{Id: a.Id + 1,
 		TL: a.TL,
