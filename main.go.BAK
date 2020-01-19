@@ -1,0 +1,65 @@
+package main
+
+import (
+	"fmt"
+	"math/rand"
+	"time"
+)
+
+type Area struct {
+	Id    int
+	TL    []int // Top Left     ex.)  0,  0
+	BR    []int // Bottom Right ex.) 20, 10
+	Child *Area
+}
+
+func (a *Area) W() int {
+	return a.BR[0] - a.TL[0]
+}
+
+func (a *Area) H() int {
+	return a.BR[1] - a.TL[1]
+}
+func (a *Area) IsRange(x int, y int) bool {
+	return a.TL[0] >= x && a.TL[1] >= y && a.BR[0] < x && a.BR[1] < y
+}
+
+func (a *Area) Show(x int, y int) (int, error) {
+	if a.IsRange(x, y) {
+		return a.Id, nil
+	} else {
+		if a.Child == nil {
+			return 0, fmt.Errorf("err. no child in %d, %d", x, y)
+		}
+		return a.Child.Show(x, y)
+	}
+}
+
+func (a *Area) SepW() (Area, Area) {
+	x := rand.Intn(a.W())
+	tl1, br1 := a.TL, []int{x, a.BR[1]}
+	tl2, br2 := []int{x + 1, a.TL[1]}, a.BR
+
+	subA := Area{Id: a.Id + 1, TL: tl1, BR: br1}
+	subB := Area{Id: a.Id + 1, TL: tl2, BR: br2}
+	return subA, subB
+}
+
+func main() {
+	rand.Seed(time.Now().UnixNano()) // set random seed
+	x, y := 10, 5
+	area := Area{Id: 0, TL: []int{0, 0}, BR: []int{x, y}}
+
+	for i := 0; i < x; i++ {
+		for j := 0; j < y; j++ {
+			res, err := area.Show(i, j)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			fmt.Println(i, j, res)
+		}
+	}
+	fmt.Println("end")
+
+}
