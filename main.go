@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"time"
 )
@@ -44,12 +45,41 @@ func (a *Area) ShowRange(w int, h int) {
 	}
 }
 
+func RandFilterIntn(num int, upto int) int {
+	x := rand.Intn(num)
+	x = int(math.Min(float64(num-4), float64(x)))
+	x = int(math.Max(float64(4), float64(x)))
+	return x
+}
+
 func (a *Area) Sep() {
-	sepX := 4 + rand.Intn(a.W()-4)
+	sepX := RandFilterIntn(a.W(), 4)
 	fmt.Println("sepX:", sepX)
-	subA := Area{Id: a.Id + 1, TL: a.TL, BR: []int{sepX + a.TL[0], a.BR[1]}}
-	subB := Area{Id: a.Id + 1, TL: []int{sepX + a.TL[0], a.TL[1]}, BR: a.BR}
-	if sepX < a.W()/2 {
+	subA := Area{Id: a.Id + 1,
+		TL: a.TL,
+		BR: []int{a.BR[0] - sepX, a.BR[1]},
+	}
+	subB := Area{
+		Id: a.Id + 1,
+		TL: []int{a.TL[0] + (a.W() - sepX), a.TL[1]},
+		BR: a.BR,
+	}
+	if subA.W() > subB.W() {
+		// 大きい方を子とする
+		a.Child = &subA
+		a.TL, a.BR = subB.TL, subB.BR
+	} else {
+		a.Child = &subB
+		a.TL, a.BR = subA.TL, subA.BR
+	}
+}
+
+func (a *Area) SepH() {
+	sepY := rand.Intn(a.H())
+	fmt.Println("sepY:", sepY)
+	subA := Area{Id: a.Id + 1, TL: a.TL, BR: []int{a.BR[0], a.BR[1] - sepY}}
+	subB := Area{Id: a.Id + 1, TL: []int{a.TL[0], a.TL[1] + sepY}, BR: a.BR}
+	if subA.H() < subB.H() {
 		// 大きい方を子とする
 		a.Child = &subB
 		a.TL, a.BR = subA.TL, subA.BR
@@ -62,7 +92,7 @@ func (a *Area) Sep() {
 func main() {
 	rand.Seed(time.Now().UnixNano()) // set random seed
 	fmt.Println("1. create area")
-	x, y := 50, 10
+	x, y := 50, 30
 	area := Area{Id: 0, TL: []int{0, 0}, BR: []int{x, y}}
 	area.ShowRange(x, y)
 	fmt.Println("2. sep")
