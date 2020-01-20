@@ -1,10 +1,9 @@
-package main
+package area
 
 import (
 	"fmt"
 	"math"
 	"math/rand"
-	"time"
 )
 
 type Area struct {
@@ -93,22 +92,5 @@ func (a *Area) SepH() {
 	} else {
 		a.Child = &subB
 		a.TL, a.BR = subA.TL, subA.BR
-	}
-}
-
-func main() {
-	rand.Seed(time.Now().UnixNano()) // set random seed
-	fmt.Println("1. create area")
-	x, y := 100, 50
-	area := Area{Id: 0, TL: []int{0, 0}, BR: []int{x, y}}
-	area.ShowRange(x, y)
-
-	countup := 0
-	baseArea := &area
-	for countup < 5 {
-		baseArea.Sep()
-		area.ShowRange(x, y)
-		baseArea = baseArea.Child
-		countup++
 	}
 }
