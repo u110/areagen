@@ -52,12 +52,16 @@ func RandFilterIntn(num int, upto float64) int {
 	return int(x)
 }
 
+var count int
+
+// 交互の垂直、水平の分割を行う
 func (a *Area) Sep() {
-	if a.H() > a.W() {
+	if count%2 == 0 {
 		a.SepH()
 	} else {
 		a.SepV()
 	}
+	count++
 }
 
 // 水平分割
@@ -95,7 +99,7 @@ func (a *Area) SepH() {
 func main() {
 	rand.Seed(time.Now().UnixNano()) // set random seed
 	fmt.Println("1. create area")
-	x, y := 50, 50
+	x, y := 100, 50
 	area := Area{Id: 0, TL: []int{0, 0}, BR: []int{x, y}}
 	area.ShowRange(x, y)
 
