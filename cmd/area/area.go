@@ -7,22 +7,33 @@ import (
 )
 
 type Area struct {
-	Id    int
-	TL    []int
-	BR    []int
-	Room  *Area
-	Child *Area
-	Paths [][]int
+	Id     int
+	TL     []int
+	BR     []int
+	Room   *Area
+	Child  *Area
+	Paths  [][]int
+	NextTo []int // 隣接している側 0,1,2,3 - 上右下左
 }
 
 // 隣接する部屋に向けて通路を生成する
 func (a *Area) GenPath() {
 	// TODO:(u110) fix
 	a.Paths = make([][]int, 0)
-	a.GenBottomPath()
-	a.GenTopPath()
-	a.GenRightPath()
-	a.GenLeftPath()
+	for _, i := range a.NextTo {
+		switch i {
+		case 0:
+			a.GenTopPath()
+		case 1:
+			a.GenRightPath()
+		case 2:
+			a.GenBottomPath()
+		case 3:
+			a.GenLeftPath()
+		default:
+			return
+		}
+	}
 
 }
 
@@ -191,9 +202,13 @@ func (a *Area) SepV() {
 		// 大きい方を子とする
 		a.Child = &subA
 		a.TL, a.BR = subB.TL, subB.BR
+		a.Child.NextTo = append(a.Child.NextTo, 1)
+		a.NextTo = append(a.NextTo, 3)
 	} else {
 		a.Child = &subB
 		a.TL, a.BR = subA.TL, subA.BR
+		a.Child.NextTo = append(a.Child.NextTo, 3)
+		a.NextTo = append(a.NextTo, 1)
 	}
 }
 
@@ -206,8 +221,12 @@ func (a *Area) SepH() {
 		// 大きい方を子とする
 		a.Child = &subA
 		a.TL, a.BR = subB.TL, subB.BR
+		a.Child.NextTo = append(a.Child.NextTo, 2)
+		a.NextTo = append(a.NextTo, 0)
 	} else {
 		a.Child = &subB
 		a.TL, a.BR = subA.TL, subA.BR
+		a.Child.NextTo = append(a.Child.NextTo, 0)
+		a.NextTo = append(a.NextTo, 2)
 	}
 }
