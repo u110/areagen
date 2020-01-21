@@ -34,7 +34,36 @@ func (a *Area) GenPath() {
 			return
 		}
 	}
+}
 
+func (a *Area) LinkPath() {
+	for _, i := range a.NextTo {
+		switch i {
+		case 0:
+			// childのbottomのx座標まで伸ばす
+			var x int
+			if a.Child.Paths == nil {
+				return
+			}
+			for _, p := range a.Child.Paths {
+				if p[1] == a.Child.BR[1] {
+					x = p[0]
+				}
+			}
+			start := int(math.Min(float64(x), float64(a.Paths[0][0])))
+			end := int(math.Max(float64(x), float64(a.Paths[0][0])))
+			length := end - start
+			paths := make([][]int, length)
+			i := 0
+			for i < length {
+				paths[i] = []int{start + i, a.TL[1]}
+				i++
+			}
+			a.Paths = append(a.Paths, paths...)
+		default:
+			return
+		}
+	}
 }
 
 // 上方に通路を生成
@@ -193,9 +222,11 @@ func (a *Area) Sep() {
 	count++
 }
 
+var UPTO_AREA float64 = 10
+
 // 水平分割
 func (a *Area) SepV() {
-	sepX := RandFilterIntn(a.W(), 8)
+	sepX := RandFilterIntn(a.W(), UPTO_AREA)
 	subA := Area{Id: a.Id + 1, TL: a.TL, BR: []int{a.BR[0] - sepX, a.BR[1]}}
 	subB := Area{Id: a.Id + 1, TL: []int{a.TL[0] + (a.W() - sepX), a.TL[1]}, BR: a.BR}
 	if subA.W() > subB.W() {
@@ -214,7 +245,7 @@ func (a *Area) SepV() {
 
 // 垂直分割
 func (a *Area) SepH() {
-	sepY := RandFilterIntn(a.H(), 8)
+	sepY := RandFilterIntn(a.H(), UPTO_AREA)
 	subA := Area{Id: a.Id + 1, TL: a.TL, BR: []int{a.BR[0], a.BR[1] - sepY}}
 	subB := Area{Id: a.Id + 1, TL: []int{a.TL[0], (a.H() - sepY) + a.TL[1]}, BR: a.BR}
 	if subA.H() > subB.H() {

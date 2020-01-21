@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/u110/areagen/cmd/area"
 	"math/rand"
 	"time"
@@ -18,9 +19,8 @@ func main() {
 
 	for {
 		mainArea := area.Area{Id: 0, TL: []int{0, 0}, BR: []int{x, y}}
-		mainArea.GenRoom()
-		mainArea.GenPath()
 		mainArea.ShowRange(x, y)
+		time.Sleep(500 * time.Millisecond)
 
 		areaArr := []*area.Area{}
 		areaArr = append(areaArr, &mainArea)
@@ -33,10 +33,12 @@ func main() {
 			target.GenPath()
 			target.Child.GenRoom()
 			target.Child.GenPath()
+			mainArea.ShowRange(x, y)
+			fmt.Println(target.NextTo)
+			time.Sleep(500 * time.Millisecond)
+
 			target = target.Child
 			areaArr = append(areaArr, target)
-			mainArea.ShowRange(x, y)
-			time.Sleep(500 * time.Millisecond)
 			countup++
 		}
 		mainArea.ShowRange(x, y)
