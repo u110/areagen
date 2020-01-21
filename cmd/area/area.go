@@ -12,6 +12,32 @@ type Area struct {
 	BR    []int
 	Room  *Area
 	Child *Area
+	Paths [][]int
+}
+
+func (a *Area) GenPath() {
+	pathlen := a.Room.TL[1] - a.TL[1]
+	a.Paths = make([][]int, pathlen)
+
+	countup := 0
+	for countup < pathlen {
+		a.Paths[countup] = []int{
+			a.Room.TL[0],
+			a.TL[1] + countup,
+		}
+		countup++
+	}
+}
+
+func (a *Area) InPath(x int, y int) bool {
+	pathlen := len(a.Paths)
+	for i := 0; i < pathlen; i++ {
+		path := a.Paths[i]
+		if x == path[0] && y == path[1] {
+			return true
+		}
+	}
+	return false
 }
 
 func (a *Area) GenRoom() {
@@ -45,12 +71,15 @@ func (a *Area) H() int {
 }
 
 func (a *Area) Show(i int, j int) error {
+	mark := fmt.Sprint(a.Id)
 	if a.InRange(i, j) {
-		point := fmt.Sprint(a.Id)
-		if a.IsRoom(i, j) {
-			point = "."
+		if a.InPath(i, j) {
+			mark = "_"
 		}
-		fmt.Printf("\x1b[3%dm%s\x1b[0m", a.Id%6+1, point)
+		if a.IsRoom(i, j) {
+			mark = "."
+		}
+		fmt.Printf("\x1b[3%dm%s\x1b[0m", a.Id%6+1, mark)
 		return nil
 	}
 	if a.Child != nil {
