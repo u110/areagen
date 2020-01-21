@@ -21,6 +21,8 @@ func (a *Area) GenPath() {
 	a.Paths = make([][]int, 0)
 	a.GenBottomPath()
 	a.GenTopPath()
+	a.GenRightPath()
+	a.GenLeftPath()
 
 }
 
@@ -52,6 +54,40 @@ func (a *Area) GenBottomPath() {
 		paths[countup] = []int{
 			x,
 			a.Room.BR[1] + countup,
+		}
+		countup++
+	}
+	a.Paths = append(a.Paths, paths...)
+}
+
+// 右方に通路を生成
+func (a *Area) GenRightPath() {
+	pathlen := a.BR[0] - a.Room.BR[0]
+	y := a.Room.TL[1] + rand.Intn(a.Room.H())
+
+	paths := make([][]int, pathlen)
+	countup := 0
+	for countup < pathlen {
+		paths[countup] = []int{
+			a.Room.BR[0] + countup,
+			y,
+		}
+		countup++
+	}
+	a.Paths = append(a.Paths, paths...)
+}
+
+// 左方に通路を生成
+func (a *Area) GenLeftPath() {
+	pathlen := a.Room.TL[0] - a.TL[0]
+	y := a.Room.TL[1] + rand.Intn(a.Room.H())
+
+	paths := make([][]int, pathlen)
+	countup := 0
+	for countup < pathlen {
+		paths[countup] = []int{
+			a.TL[0] + countup,
+			y,
 		}
 		countup++
 	}
