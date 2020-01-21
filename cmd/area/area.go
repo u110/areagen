@@ -19,7 +19,6 @@ func (a *Area) GenRoom() {
 	y1 := RandFilterIntn(a.H()/2, 2)
 	x2 := RandFilterIntn(a.W()/2, 2)
 	y2 := RandFilterIntn(a.H()/2, 2)
-	fmt.Println(x1, y1, x2, y2)
 	a.Room = &Area{
 		TL: []int{a.TL[0] + x1, a.TL[1] + y1},
 		BR: []int{a.BR[0] - x2, a.BR[1] - y2},
@@ -61,6 +60,7 @@ func (a *Area) Show(i int, j int) error {
 }
 
 func (a *Area) ShowRange(w int, h int) {
+	fmt.Print("\033[H\033[2J") // カーソル移動、再描画で erase
 	for j := 0; j < h; j++ {
 		for i := 0; i < w; i++ {
 			a.Show(i, j)
@@ -91,7 +91,6 @@ func (a *Area) Sep() {
 // 水平分割
 func (a *Area) SepV() {
 	sepX := RandFilterIntn(a.W(), 8)
-	fmt.Println("sepX:", sepX)
 	subA := Area{Id: a.Id + 1, TL: a.TL, BR: []int{a.BR[0] - sepX, a.BR[1]}}
 	subB := Area{Id: a.Id + 1, TL: []int{a.TL[0] + (a.W() - sepX), a.TL[1]}, BR: a.BR}
 	if subA.W() > subB.W() {
@@ -107,7 +106,6 @@ func (a *Area) SepV() {
 // 垂直分割
 func (a *Area) SepH() {
 	sepY := RandFilterIntn(a.H(), 8)
-	fmt.Println("sepY:", sepY)
 	subA := Area{Id: a.Id + 1, TL: a.TL, BR: []int{a.BR[0], a.BR[1] - sepY}}
 	subB := Area{Id: a.Id + 1, TL: []int{a.TL[0], (a.H() - sepY) + a.TL[1]}, BR: a.BR}
 	if subA.H() > subB.H() {
