@@ -15,18 +15,47 @@ type Area struct {
 	Paths [][]int
 }
 
+// 隣接する部屋に向けて通路を生成する
 func (a *Area) GenPath() {
-	pathlen := a.Room.TL[1] - a.TL[1]
-	a.Paths = make([][]int, pathlen)
+	// TODO:(u110) fix
+	a.Paths = make([][]int, 0)
+	a.GenBottomPath()
+	a.GenTopPath()
 
+}
+
+// 上方に通路を生成
+func (a *Area) GenTopPath() {
+	pathlen := a.Room.TL[1] - a.TL[1]
+	x := a.Room.TL[0] + rand.Intn(a.Room.W())
+
+	paths := make([][]int, pathlen)
 	countup := 0
 	for countup < pathlen {
-		a.Paths[countup] = []int{
-			a.Room.TL[0],
+		paths[countup] = []int{
+			x,
 			a.TL[1] + countup,
 		}
 		countup++
 	}
+	a.Paths = append(a.Paths, paths...)
+}
+
+// 下方に通路を生成
+func (a *Area) GenBottomPath() {
+	pathlen := a.BR[1] - a.Room.BR[1]
+	x := a.Room.TL[0] + rand.Intn(a.Room.W())
+
+	paths := make([][]int, pathlen)
+	countup := 0
+	for countup < pathlen {
+		paths[countup] = []int{
+			x,
+			a.Room.BR[1] + countup,
+		}
+		countup++
+	}
+	a.Paths = append(a.Paths, paths...)
 }
 
 func (a *Area) InPath(x int, y int) bool {
