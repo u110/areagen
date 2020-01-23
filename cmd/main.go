@@ -48,15 +48,12 @@ func main() {
 			target.GenPath()
 			target.Child.GenRoom()
 			target.Child.GenPath()
-			mainArea.ShowRange(x, y)
-			fmt.Println(target.NextTo)
-			time.Sleep(500 * time.Millisecond)
-
-			target.Paths = append(target.Paths, target.Child.Paths...)
 			target = target.Child
 			areaArr = append(areaArr, target)
 			countup++
 		}
+		mainArea.ShowRange(x, y)
+		time.Sleep(500 * time.Millisecond)
 		for _, a := range areaArr {
 			a.LinkPath()
 		}

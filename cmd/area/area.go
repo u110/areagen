@@ -12,14 +12,20 @@ type Area struct {
 	BR     []int
 	Room   *Area
 	Child  *Area
-	Paths  [][]int
+	Path0  [][]int
+	Path1  [][]int
+	Path2  [][]int
+	Path3  [][]int
 	NextTo []int // 隣接している側 0,1,2,3 - 上右下左
 }
 
 // 隣接する部屋に向けて通路を生成する
 func (a *Area) GenPath() {
 	// TODO:(u110) fix
-	a.Paths = make([][]int, 0)
+	a.Path0 = make([][]int, 0)
+	a.Path1 = make([][]int, 0)
+	a.Path2 = make([][]int, 0)
+	a.Path3 = make([][]int, 0)
 	for _, i := range a.NextTo {
 		switch i {
 		case 0:
@@ -37,32 +43,32 @@ func (a *Area) GenPath() {
 }
 
 func (a *Area) LinkPath() {
-	for _, i := range a.NextTo {
-		switch i {
-		case 0:
-			// childのbottomのx座標まで伸ばす
-			var x int
-			if a.Child.Paths == nil {
-				return
-			}
-			for _, p := range a.Child.Paths {
-				if p[1] == a.Child.BR[1] {
-					x = p[0]
-				}
-			}
-			start := int(math.Min(float64(x), float64(a.Paths[0][0])))
-			end := int(math.Max(float64(x), float64(a.Paths[0][0])))
-			length := end - start
-			paths := make([][]int, length)
-			i := 0
-			for i < length {
-				paths[i] = []int{start + i, a.TL[1]}
-				i++
-			}
-			a.Paths = append(a.Paths, paths...)
-		default:
+	idx := len(a.NextTo)
+	i := a.NextTo[idx-1]
+	switch i {
+	case 0:
+		// childのbottomのx座標まで伸ばす
+		if a.Child.Path2 == nil {
 			return
 		}
+		for _, p := range a.Child.Path2 {
+			if p[1] == a.Child.BR[1]-1 {
+				x := p[0]
+				start := int(math.Min(float64(x), float64(a.Path0[0][0])))
+				end := int(math.Max(float64(x), float64(a.Path0[0][0])))
+				length := end - start + 1
+				paths := make([][]int, length)
+				i := 0
+				for i < length {
+					paths[i] = []int{start + i, a.TL[1]}
+					i++
+				}
+				a.Path0 = append(a.Path0, paths...)
+				return
+			}
+		}
+	default:
+		return
 	}
 }
 
@@ -80,7 +86,7 @@ func (a *Area) GenTopPath() {
 		}
 		countup++
 	}
-	a.Paths = append(a.Paths, paths...)
+	a.Path0 = append(a.Path0, paths...)
 }
 
 // 下方に通路を生成
@@ -97,7 +103,7 @@ func (a *Area) GenBottomPath() {
 		}
 		countup++
 	}
-	a.Paths = append(a.Paths, paths...)
+	a.Path2 = append(a.Path2, paths...)
 }
 
 // 右方に通路を生成
@@ -114,7 +120,7 @@ func (a *Area) GenRightPath() {
 		}
 		countup++
 	}
-	a.Paths = append(a.Paths, paths...)
+	a.Path1 = append(a.Path1, paths...)
 }
 
 // 左方に通路を生成
@@ -131,14 +137,27 @@ func (a *Area) GenLeftPath() {
 		}
 		countup++
 	}
-	a.Paths = append(a.Paths, paths...)
+	a.Path3 = append(a.Path3, paths...)
 }
 
 func (a *Area) InPath(x int, y int) bool {
-	pathlen := len(a.Paths)
-	for i := 0; i < pathlen; i++ {
-		path := a.Paths[i]
-		if x == path[0] && y == path[1] {
+	for _, p := range a.Path0 {
+		if x == p[0] && y == p[1] {
+			return true
+		}
+	}
+	for _, p := range a.Path1 {
+		if x == p[0] && y == p[1] {
+			return true
+		}
+	}
+	for _, p := range a.Path2 {
+		if x == p[0] && y == p[1] {
+			return true
+		}
+	}
+	for _, p := range a.Path3 {
+		if x == p[0] && y == p[1] {
 			return true
 		}
 	}
@@ -177,10 +196,10 @@ func (a *Area) H() int {
 
 func (a *Area) Show(i int, j int) error {
 	mark := fmt.Sprint(a.Id)
+	if a.InPath(i, j) {
+		mark = "_"
+	}
 	if a.InRange(i, j) {
-		if a.InPath(i, j) {
-			mark = "_"
-		}
 		if a.IsRoom(i, j) {
 			mark = "."
 		}
