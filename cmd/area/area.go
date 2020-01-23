@@ -264,13 +264,14 @@ func (a *Area) H() int {
 }
 
 func (a *Area) Show(i int, j int) error {
-	mark := fmt.Sprint(a.Id)
+	// mark := fmt.Sprint(a.Id)
+	mark := "🟫"
 	if a.InPath(i, j) {
-		mark = "_"
+		mark = fmt.Sprint("⬜")
 	}
 	if a.InRange(i, j) {
 		if a.IsRoom(i, j) {
-			mark = "."
+			mark = fmt.Sprint("⬜")
 		}
 		fmt.Printf("\x1b[3%dm%s\x1b[0m", a.Id%6+1, mark)
 		return nil

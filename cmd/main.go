@@ -35,13 +35,13 @@ func generateArea() {
 			areaArr = append(areaArr, target)
 			countup++
 		}
-		mainArea.ShowRange(x, y)
-		time.Sleep(500 * time.Millisecond)
+		// mainArea.ShowRange(x, y)
+		// time.Sleep(500 * time.Millisecond)
 		for _, a := range areaArr {
 			a.LinkPath()
 		}
 		mainArea.ShowRange(x, y)
-		time.Sleep(500 * time.Millisecond)
+		time.Sleep(1200 * time.Millisecond)
 	}
 }
 
