@@ -90,6 +90,52 @@ func (a *Area) LinkPath() {
 				return
 			}
 		}
+	case 2:
+		// childのTop x標まで伸ばす
+		if a.Child == nil || a.Child.Path0 == nil {
+			return
+		}
+		fmt.Println(a.Child.Path0, a.Child.TL)
+		for _, p := range a.Child.Path0 {
+			if p[1] == a.Child.TL[1] {
+				x := p[0]
+				start := int(math.Min(float64(x), float64(a.Path2[0][0])))
+				end := int(math.Max(float64(x), float64(a.Path2[0][0])))
+				length := end - start + 1
+				paths := make([][]int, length)
+				i := 0
+				for i < length {
+					paths[i] = []int{start + i, a.BR[1] - 1}
+					i++
+				}
+				fmt.Println("here", paths)
+				a.Path2 = append(a.Path2, paths...)
+				return
+			}
+		}
+	case 3:
+		// childのRight x標まで伸ばす
+		if a.Child == nil || a.Child.Path1 == nil {
+			return
+		}
+		fmt.Println(a.Child.Path1, a.Child.BR)
+		for _, p := range a.Child.Path1 {
+			if p[0] == a.Child.BR[0]-1 {
+				y := p[1]
+				start := int(math.Min(float64(y), float64(a.Path3[0][1])))
+				end := int(math.Max(float64(y), float64(a.Path3[0][1])))
+				length := end - start + 1
+				paths := make([][]int, length)
+				i := 0
+				for i < length {
+					paths[i] = []int{a.TL[0], start + i}
+					i++
+				}
+				fmt.Println("here", paths)
+				a.Path3 = append(a.Path3, paths...)
+				return
+			}
+		}
 	default:
 		return
 	}

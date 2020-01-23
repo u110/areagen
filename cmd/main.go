@@ -46,7 +46,7 @@ func generateArea() {
 }
 
 func test() {
-	rand.Seed(1)
+	rand.Seed(3)
 	fmt.Println("start")
 	x, y := 100, 50
 	m := area.Area{Id: 0, TL: []int{0, 0}, BR: []int{x, y}}
