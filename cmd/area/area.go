@@ -47,8 +47,8 @@ func (a *Area) LinkPath() {
 	i := a.NextTo[idx-1]
 	switch i {
 	case 0:
-		// childのbottomのx座標まで伸ばす
-		if a.Child.Path2 == nil {
+		// childのBottom x標まで伸ばす
+		if a.Child == nil || a.Child.Path2 == nil {
 			return
 		}
 		for _, p := range a.Child.Path2 {
@@ -64,6 +64,29 @@ func (a *Area) LinkPath() {
 					i++
 				}
 				a.Path0 = append(a.Path0, paths...)
+				return
+			}
+		}
+	case 1:
+		// childのLeft x標まで伸ばす
+		if a.Child == nil || a.Child.Path3 == nil {
+			return
+		}
+		fmt.Println(a.Child.Path3, a.Child.TL)
+		for _, p := range a.Child.Path3 {
+			if p[0] == a.Child.TL[0] {
+				y := p[1]
+				start := int(math.Min(float64(y), float64(a.Path1[0][1])))
+				end := int(math.Max(float64(y), float64(a.Path1[0][1])))
+				length := end - start + 1
+				paths := make([][]int, length)
+				i := 0
+				for i < length {
+					paths[i] = []int{a.BR[0] - 1, start + i}
+					i++
+				}
+				fmt.Println("here", paths)
+				a.Path1 = append(a.Path1, paths...)
 				return
 			}
 		}
