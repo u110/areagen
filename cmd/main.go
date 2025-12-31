@@ -1,11 +1,22 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"github.com/u110/areagen/cmd/area"
 	"math/rand"
 	"time"
+
+	"github.com/u110/areagen/cmd/area"
 )
+
+// Config はダンジョン生成のパラメータを保持する
+type Config struct {
+	Loop     bool
+	Interval int
+	Width    int
+	Height   int
+	Depth    int
+}
 
 func ReGenerateRoom(arr []*area.Area) {
 	for _, i := range arr {
@@ -13,9 +24,9 @@ func ReGenerateRoom(arr []*area.Area) {
 	}
 }
 
-func generateArea() {
+func generateArea(cfg Config) {
 	rand.Seed(time.Now().UnixNano()) // set random seed
-	x, y := 100, 50
+	x, y := cfg.Width, cfg.Height
 
 	for {
 		mainArea := area.Area{Id: 0, TL: []int{0, 0}, BR: []int{x, y}}
@@ -25,7 +36,7 @@ func generateArea() {
 		target := &mainArea
 
 		countup := 0
-		for countup < 6 {
+		for countup < cfg.Depth {
 			target.Sep()
 			target.GenRoom()
 			target.GenPath()
@@ -35,13 +46,15 @@ func generateArea() {
 			areaArr = append(areaArr, target)
 			countup++
 		}
-		// mainArea.ShowRange(x, y)
-		// time.Sleep(500 * time.Millisecond)
 		for _, a := range areaArr {
 			a.LinkPath()
 		}
 		mainArea.ShowRange(x, y)
-		time.Sleep(1200 * time.Millisecond)
+
+		if !cfg.Loop {
+			break
+		}
+		time.Sleep(time.Duration(cfg.Interval) * time.Millisecond)
 	}
 }
 
@@ -60,7 +73,13 @@ func test() {
 }
 
 func main() {
-	generateArea()
-	// test()
+	cfg := Config{}
+	flag.BoolVar(&cfg.Loop, "loop", false, "Enable continuous regeneration")
+	flag.IntVar(&cfg.Interval, "interval", 1200, "Regeneration interval in milliseconds")
+	flag.IntVar(&cfg.Width, "width", 100, "Map width")
+	flag.IntVar(&cfg.Height, "height", 50, "Map height")
+	flag.IntVar(&cfg.Depth, "depth", 6, "BSP split depth")
+	flag.Parse()
 
+	generateArea(cfg)
 }
